@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Schadensmeldung</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; background: #f4f4f4; }
+    .container { background: white; padding: 2rem; border-radius: 10px; max-width: 600px; margin: auto; }
+    textarea, button { width: 100%; margin-top: 1rem; padding: 0.5rem; font-size: 1rem; }
+    #status { margin-top: 2rem; padding: 1rem; background: #e0ffe0; border-left: 5px solid green; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🛠️ Schadensmeldung</h2>
+    <textarea id="damageText" rows="5" placeholder="Beschreiben Sie den Schaden..."></textarea>
+    <button onclick="submitDamage()">Meldung absenden</button>
+    <div id="status"></div>
+  </div>
+
+  <script>
+    async function submitDamage() {
+      const text = document.getElementById("damageText").value;
+      document.getElementById("status").innerHTML = "⏳ Analyse läuft...";
+
+      const response = await fetch('/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ damage: text })
+      });
+
+      const result = await response.json();
+      document.getElementById("status").innerHTML = `
+        ✅ Analyse abgeschlossen!<br>
+        Zuständiger Handwerker: <strong>${result.worker}</strong><br>
+        Der Mieter wurde benachrichtigt.
+      `;
+    }
+  </script>
+</body>
+</html>
